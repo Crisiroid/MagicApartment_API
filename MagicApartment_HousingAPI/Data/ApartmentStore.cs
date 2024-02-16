@@ -11,4 +11,3 @@ namespace MagicApartment_HousingAPI.Data
             };
     }
 }
-}

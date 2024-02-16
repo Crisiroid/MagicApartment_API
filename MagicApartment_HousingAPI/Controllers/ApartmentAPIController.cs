@@ -15,5 +15,10 @@ namespace MagicApartment_HousingAPI.Controllers
         {
             return ApartmentStore.apartmentList;
         }
+        [HttpGet("id")]
+        public ApartmentDTO getApartment(int id)
+        {
+            return ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+        }
     }
 }
