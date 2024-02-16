@@ -11,14 +11,29 @@ namespace MagicApartment_HousingAPI.Controllers
     public class ApartmentAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<ApartmentDTO> getApartments()
+        public ActionResult<IEnumerable<ApartmentDTO>> getApartments()
         {
-            return ApartmentStore.apartmentList;
+            return Ok(ApartmentStore.apartmentList);
         }
         [HttpGet("id")]
-        public ApartmentDTO getApartment(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ApartmentDTO> getApartment(int id)
         {
-            return ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var Apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+                if(Apartment == null)
+                {
+                    return NotFound();
+                }
+                return Ok(Apartment);
+            }
         }
     }
 }
