@@ -15,8 +15,8 @@ namespace MagicApartment_HousingAPI.Controllers
         {
             return Ok(ApartmentStore.apartmentList);
         }
-        
-        
+
+
         [HttpGet("id", Name = "getApartment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -30,7 +30,7 @@ namespace MagicApartment_HousingAPI.Controllers
             else
             {
                 var Apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
-                if(Apartment == null)
+                if (Apartment == null)
                 {
                     return NotFound();
                 }
@@ -43,13 +43,13 @@ namespace MagicApartment_HousingAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ApartmentDTO> createApartment([FromBody] ApartmentDTO apartmentDTO) {
-        
-            if(ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+
+            if (ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("NameError", "We Already have this apartment");
                 return BadRequest();
             }
-            if(apartmentDTO == null)
+            if (apartmentDTO == null)
             {
                 return BadRequest(apartmentDTO);
             }
@@ -60,7 +60,23 @@ namespace MagicApartment_HousingAPI.Controllers
 
                 return CreatedAtRoute("getApartment", new { id = apartmentDTO.Id }, apartmentDTO);
             }
-        
+
         }
+
+        [HttpDelete("{id:int}", Name = "deleteApartment")]
+        public IActionResult deleteApartment(int id)
+        {
+
+            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            if(apartment == null)
+            {
+                return NotFound();
+            }
+
+            ApartmentStore.apartmentList.Remove(apartment);
+            return NoContent();
+
+        }
+
     }
 }
