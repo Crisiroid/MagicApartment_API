@@ -16,5 +16,6 @@ namespace MagicApartment_HousingAPI.Model.DTO
         public string ImageURL { get; set; }
         [Required]
         public string Price { get; set; }
+        public string OwnerName { get; set; }
     }
 }

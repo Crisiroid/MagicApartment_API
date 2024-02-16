@@ -10,10 +10,16 @@ namespace MagicApartment_HousingAPI.Controllers
     [ApiController]
     public class ApartmentAPIController : ControllerBase
     {
+        private readonly ApartmentDBContext _dbContext;
+        public ApartmentAPIController(ApartmentDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<ApartmentDTO>> getApartments()
         {
-            return Ok(ApartmentStore.apartmentList);
+            return Ok(_dbContext.Apartments);
         }
 
 
@@ -29,7 +35,7 @@ namespace MagicApartment_HousingAPI.Controllers
             }
             else
             {
-                var Apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+                var Apartment = _dbContext.Apartments.FirstOrDefault(u => u.Id == id);
                 if (Apartment == null)
                 {
                     return NotFound();
@@ -44,7 +50,7 @@ namespace MagicApartment_HousingAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ApartmentDTO> createApartment([FromBody] ApartmentDTO apartmentDTO) {
 
-            if (ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+            if (_dbContext.Apartments.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("NameError", "We Already have this apartment");
                 return BadRequest();
@@ -55,8 +61,17 @@ namespace MagicApartment_HousingAPI.Controllers
             }
             else
             {
-                apartmentDTO.Id = ApartmentStore.apartmentList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
-                ApartmentStore.apartmentList.Add(apartmentDTO);
+                Apartment apartment = new()
+                {
+                    Name = apartmentDTO.Name, 
+                    Meterage = apartmentDTO.Meterage, 
+                    Description = apartmentDTO.Description,
+                    ImageURL = apartmentDTO.ImageURL,
+                    Price = apartmentDTO.Price,
+                    OwnerName = apartmentDTO.OwnerName
+                };
+                _dbContext.Apartments.Add(apartment);
+                _dbContext.SaveChanges();
 
                 return CreatedAtRoute("getApartment", new { id = apartmentDTO.Id }, apartmentDTO);
             }
@@ -70,13 +85,14 @@ namespace MagicApartment_HousingAPI.Controllers
         public IActionResult deleteApartment(int id)
         {
 
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            var apartment = _dbContext.Apartments.FirstOrDefault(u => u.Id == id);
             if(apartment == null)
             {
                 return NotFound();
             }
 
-            ApartmentStore.apartmentList.Remove(apartment);
+            _dbContext.Apartments.Remove(apartment);
+            _dbContext.SaveChanges();
             return NoContent();
 
         }
@@ -84,7 +100,6 @@ namespace MagicApartment_HousingAPI.Controllers
         [HttpPut("{id:int}", Name = "updateApartment")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult updateApartment(int id, [FromBody]ApartmentDTO apartmentDTO)
         {
             if(apartmentDTO == null || id != apartmentDTO.Id)
@@ -92,15 +107,18 @@ namespace MagicApartment_HousingAPI.Controllers
                 return BadRequest();
             }
 
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
-            if(apartment == null)
+            Apartment apartment = new()
             {
-                return NotFound();
-            }
-
-            apartment.Name = apartmentDTO.Name;
-            apartment.Description = apartmentDTO.Description;
-            apartment.Meterage = apartmentDTO.Meterage;
+                Id = id,
+                Name = apartmentDTO.Name,
+                Meterage = apartmentDTO.Meterage,
+                Description = apartmentDTO.Description,
+                ImageURL = apartmentDTO.ImageURL,
+                Price = apartmentDTO.Price,
+                OwnerName = apartmentDTO.OwnerName
+            };
+            _dbContext.Apartments.Update(apartment);
+            _dbContext.SaveChanges();
 
             return NoContent();
 
