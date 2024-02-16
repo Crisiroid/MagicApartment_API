@@ -17,7 +17,7 @@ namespace MagicApartment_HousingAPI.Controllers
         }
         
         
-        [HttpGet("id")]
+        [HttpGet("id", Name = "getApartment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,7 +50,7 @@ namespace MagicApartment_HousingAPI.Controllers
                 apartmentDTO.Id = ApartmentStore.apartmentList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
                 ApartmentStore.apartmentList.Add(apartmentDTO);
 
-                return Ok(apartmentDTO);
+                return CreatedAtRoute("getApartment", new { id = apartmentDTO.Id }, apartmentDTO);
             }
         
         }
