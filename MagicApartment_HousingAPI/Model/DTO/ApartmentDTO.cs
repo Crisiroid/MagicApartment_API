@@ -9,5 +9,7 @@ namespace MagicApartment_HousingAPI.Model.DTO
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+        public string Description { get; set; }
+        public string Meterage { get; set; }
     }
 }

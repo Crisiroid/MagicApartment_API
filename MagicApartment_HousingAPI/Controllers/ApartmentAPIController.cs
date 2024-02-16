@@ -64,6 +64,9 @@ namespace MagicApartment_HousingAPI.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "deleteApartment")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult deleteApartment(int id)
         {
 
@@ -74,6 +77,31 @@ namespace MagicApartment_HousingAPI.Controllers
             }
 
             ApartmentStore.apartmentList.Remove(apartment);
+            return NoContent();
+
+        }
+
+        [HttpPut("{id:int}", Name = "updateApartment")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult updateApartment(int id, [FromBody]ApartmentDTO apartmentDTO)
+        {
+            if(apartmentDTO == null || id != apartmentDTO.Id)
+            {
+                return BadRequest();
+            }
+
+            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            if(apartment == null)
+            {
+                return NotFound();
+            }
+
+            apartment.Name = apartmentDTO.Name;
+            apartment.Description = apartmentDTO.Description;
+            apartment.Meterage = apartmentDTO.Meterage;
+
             return NoContent();
 
         }
