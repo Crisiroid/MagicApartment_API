@@ -15,6 +15,8 @@ namespace MagicApartment_HousingAPI.Controllers
         {
             return Ok(ApartmentStore.apartmentList);
         }
+        
+        
         [HttpGet("id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,6 +36,23 @@ namespace MagicApartment_HousingAPI.Controllers
                 }
                 return Ok(Apartment);
             }
+        }
+
+        [HttpPost]
+        public ActionResult<ApartmentDTO> createApartment([FromBody] ApartmentDTO apartmentDTO) {
+        
+            if(apartmentDTO == null)
+            {
+                return BadRequest(apartmentDTO);
+            }
+            else
+            {
+                apartmentDTO.Id = ApartmentStore.apartmentList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
+                ApartmentStore.apartmentList.Add(apartmentDTO);
+
+                return Ok(apartmentDTO);
+            }
+        
         }
     }
 }
