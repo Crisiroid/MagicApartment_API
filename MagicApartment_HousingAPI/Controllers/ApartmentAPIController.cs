@@ -39,8 +39,16 @@ namespace MagicApartment_HousingAPI.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ApartmentDTO> createApartment([FromBody] ApartmentDTO apartmentDTO) {
         
+            if(ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+            {
+                ModelState.AddModelError("NameError", "We Already have this apartment");
+                return BadRequest();
+            }
             if(apartmentDTO == null)
             {
                 return BadRequest(apartmentDTO);
