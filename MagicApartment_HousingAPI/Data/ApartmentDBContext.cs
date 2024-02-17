@@ -7,6 +7,7 @@ namespace MagicApartment_HousingAPI.Data
     {
         public ApartmentDBContext(DbContextOptions<ApartmentDBContext> options) : base(options) { }
         public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<Login> Users { get; set; }
 
     }
 }

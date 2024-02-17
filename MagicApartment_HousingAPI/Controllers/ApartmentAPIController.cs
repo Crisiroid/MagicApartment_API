@@ -1,6 +1,7 @@
 ﻿using MagicApartment_HousingAPI.Data;
 using MagicApartment_HousingAPI.Model;
 using MagicApartment_HousingAPI.Model.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -63,6 +64,7 @@ public class ApartmentAPIController : ControllerBase
 
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
     public ActionResult deleteApartment(int id)
     {
