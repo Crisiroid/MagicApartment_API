@@ -1,5 +1,4 @@
 ﻿using MagicApartment_HousingAPI.Data;
-using MagicApartment_HousingAPI.Model;
 using MagicApartment_HousingAPI.Model.DTO;
 using Microsoft.AspNetCore.Mvc;
 
