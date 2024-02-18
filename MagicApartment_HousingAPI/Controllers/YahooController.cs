@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-[Authorize]
 [Route("api/Yahoo")]
 [ApiController]
 
@@ -22,7 +21,31 @@ public class YahooController : ControllerBase
 
     }
 
-    [HttpPost]
+    [HttpGet("showAllUsers")]
+    public ActionResult<IEnumerable<Login>> showAllUsers()
+    {
+        return Ok(_dbContext.Users);
+    }
+
+
+    [HttpPost("signup")]
+    public IActionResult signUp([FromBody]Login bodyLogin)
+    {
+        if (string.IsNullOrEmpty(bodyLogin.username) || string.IsNullOrEmpty(bodyLogin.password))
+        {
+            return BadRequest();
+        }
+        var login = new Login {
+            password = bodyLogin.password, 
+            username = bodyLogin.username,
+        };
+        _dbContext.Users.Add(login);
+        _dbContext.SaveChanges();
+
+        return Ok(login);
+    }
+
+    [HttpPost("checkLoginCredentials")]
     public IActionResult checkLoginCredentials([FromBody] Login loginRequest)
     {
         var user = _dbContext.Users.FirstOrDefault( u => u.username == loginRequest.username && u.password == loginRequest.password);
