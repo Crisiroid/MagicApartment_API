@@ -45,6 +45,7 @@ public class YahooController : ControllerBase
         return Ok(login);
     }
 
+    
     [HttpPost("checkLoginCredentials")]
     public IActionResult checkLoginCredentials([FromBody] Login loginRequest)
     {
